@@ -1,0 +1,132 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: backend
+  labels:
+    app: backend
+    app.kubernetes.io/name: employee-directory
+    app.kubernetes.io/component: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        app.kubernetes.io/name: employee-directory
+        app.kubernetes.io/component: backend
+    spec:
+      # Node selector to ensure pods run on EC2 nodes with backend taint
+      nodeSelector:
+        workload-type: backend
+      
+      # Tolerate the backend taint
+      tolerations:
+      - key: workload-type
+        operator: Equal
+        value: backend
+        effect: NoSchedule
+      
+      # Service account for IRSA (IAM Roles for Service Accounts)
+      serviceAccountName: backend-service-account
+      
+      containers:
+      - name: backend
+        image: your-account.dkr.ecr.us-west-2.amazonaws.com/employee-directory-backend:latest
+        ports:
+        - containerPort: 5000
+          name: http
+        
+        env:
+        - name: FLASK_ENV
+          value: "production"
+        - name: PORT
+          value: "5000"
+        - name: AWS_REGION
+          value: "us-west-2"
+        - name: DB_SECRET_NAME
+          value: "employee-directory-production-db-credentials"
+        - name: JWT_SECRET_NAME
+          value: "employee-directory-production-jwt-secret"
+        - name: CORS_ORIGINS
+          value: "*"
+        
+        # Resource limits and requests
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        
+        # Security context
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        
+        # Volume mounts for temporary files
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: logs
+          mountPath: /app/logs
+      
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
+      
+      # Pod security context
+      securityContext:
+        fsGroup: 1000
+      
+      # Restart policy
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: backend
+  labels:
+    app: backend
+    app.kubernetes.io/name: employee-directory
+    app.kubernetes.io/component: backend
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP
+    name: http
+  type: ClusterIP

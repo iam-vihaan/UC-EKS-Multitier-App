@@ -1,0 +1,33 @@
+# Fargate Profile for frontend namespace
+# This would be created via AWS CLI or Terraform, not kubectl
+# aws eks create-fargate-profile \
+#   --cluster-name employee-directory-cluster \
+#   --fargate-profile-name frontend-profile \
+#   --pod-execution-role-arn arn:aws:iam::ACCOUNT:role/eks-fargate-profile-role \
+#   --subnets subnet-12345 subnet-67890 \
+#   --selectors namespace=frontend
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fargate-profile-config
+  namespace: kube-system
+data:
+  profile-config.yaml: |
+    apiVersion: v1
+    kind: FargateProfile
+    metadata:
+      name: frontend-profile
+      clusterName: employee-directory-cluster
+    spec:
+      podExecutionRoleArn: arn:aws:iam::ACCOUNT_ID:role/eks-fargate-profile-role
+      subnets:
+        - subnet-12345678  # Replace with actual subnet IDs
+        - subnet-87654321
+      selectors:
+        - namespace: frontend
+          labels:
+            app: frontend
+      tags:
+        Environment: production
+        Application: employee-directory
