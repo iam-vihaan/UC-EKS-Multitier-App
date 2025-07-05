@@ -43,17 +43,21 @@ jobs:
           tflint_version: v0.50.2
 
       - name: Run TFLint
-        run: tflint --init && tflint -f compact
+        run: |
+          cd project/terraform
+          tflint --init && tflint -f compact
         continue-on-error: true
 
       - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: ./project/terraform
         continue-on-error: true
 
       - name: Run Checkov
         uses: bridgecrewio/checkov-action@v12
         with:
-          directory: ./
+          directory: ./project/terraform
           framework: terraform
         continue-on-error: true
 
@@ -65,6 +69,7 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: ./project/terraform
 
     steps:
       - name: Checkout
