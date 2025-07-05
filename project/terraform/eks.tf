@@ -270,6 +270,7 @@ data "aws_eks_addon_version" "kube_proxy" {
   most_recent        = true
 }
 
+
 data "aws_eks_addon_version" "ebs_csi" {
   addon_name         = "aws-ebs-csi-driver"
   kubernetes_version = aws_eks_cluster.main.version
