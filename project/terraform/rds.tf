@@ -19,43 +19,77 @@ resource "aws_db_subnet_group" "main" {
 
 # RDS Parameter Group
 resource "aws_db_parameter_group" "main" {
+
   family = "postgres14"
+
   name   = "${local.name_prefix}-db-params"
 
-  # Performance and logging parameters
   parameter {
-    name  = "log_statement"
-    value = "all"
+
+    name         = "log_statement"
+
+    value        = "all"
+
+    apply_method = "immediate"
+
   }
 
   parameter {
-    name  = "log_min_duration_statement"
-    value = "1000"
+
+    name         = "log_min_duration_statement"
+
+    value        = "1000"
+
+    apply_method = "immediate"
+
   }
 
   parameter {
-    name  = "log_connections"
-    value = "1"
+
+    name         = "log_connections"
+
+    value        = "1"
+
+    apply_method = "immediate"
+
   }
 
   parameter {
-    name  = "log_disconnections"
-    value = "1"
+
+    name         = "log_disconnections"
+
+    value        = "1"
+
+    apply_method = "immediate"
+
   }
 
   parameter {
-    name  = "shared_preload_libraries"
-    value = "pg_stat_statements"
+
+    name         = "shared_preload_libraries"
+
+    value        = "pg_stat_statements"
+
+    apply_method = "pending-reboot" # static parameter
+
   }
 
   parameter {
-    name  = "max_connections"
-    value = "200"
+
+    name         = "max_connections"
+
+    value        = "200"
+
+    apply_method = "pending-reboot" # typically static
+
   }
 
   tags = merge(local.common_tags, {
+
     Name = "${local.name_prefix}-db-params"
+
   })
+
 }
 
 # RDS Option Group (for PostgreSQL, this is minimal)
