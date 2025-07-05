@@ -22,7 +22,7 @@ spec:
       # Fargate profile selector - no node selector needed for Fargate
       containers:
       - name: frontend
-        image: your-account.dkr.ecr.us-west-2.amazonaws.com/employee-directory-frontend:latest
+        image: your-account.dkr.ecr.us-east-1.amazonaws.com/employee-directory-frontend:latest
         ports:
         - containerPort: 80
           name: http

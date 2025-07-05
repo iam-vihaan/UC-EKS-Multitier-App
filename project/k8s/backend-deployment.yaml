@@ -35,7 +35,7 @@ spec:
       
       containers:
       - name: backend
-        image: your-account.dkr.ecr.us-west-2.amazonaws.com/employee-directory-backend:latest
+        image: your-account.dkr.ecr.us-east-1.amazonaws.com/employee-directory-backend:latest
         ports:
         - containerPort: 5000
           name: http
@@ -46,7 +46,7 @@ spec:
         - name: PORT
           value: "5000"
         - name: AWS_REGION
-          value: "us-west-2"
+          value: "us-east-1"
         - name: DB_SECRET_NAME
           value: "employee-directory-production-db-credentials"
         - name: JWT_SECRET_NAME

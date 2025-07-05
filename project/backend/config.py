@@ -21,7 +21,7 @@ class Config:
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     
     # AWS configuration
-    AWS_REGION = os.environ.get('AWS_REGION', 'us-west-2')
+    AWS_REGION = os.environ.get('AWS_REGION', 'us-east-1')
     DB_SECRET_NAME = os.environ.get('DB_SECRET_NAME', 'employee-directory-db-credentials')
     
     # CORS configuration

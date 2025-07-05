@@ -7,7 +7,7 @@ set -e
 
 # Configuration
 CLUSTER_NAME="employee-directory"
-AWS_REGION="us-west-2"
+AWS_REGION="us-east-1"
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
@@ -222,8 +222,8 @@ deploy_k8s_manifests() {
     
     # Update image references in deployment files
     log_info "Updating image references..."
-    sed -i.bak "s|your-account.dkr.ecr.us-west-2.amazonaws.com|$ECR_REGISTRY|g" $temp_dir/backend-deployment.yaml
-    sed -i.bak "s|your-account.dkr.ecr.us-west-2.amazonaws.com|$ECR_REGISTRY|g" $temp_dir/frontend-deployment.yaml
+    sed -i.bak "s|your-account.dkr.ecr.us-east-1.amazonaws.com|$ECR_REGISTRY|g" $temp_dir/backend-deployment.yaml
+    sed -i.bak "s|your-account.dkr.ecr.us-east-1.amazonaws.com|$ECR_REGISTRY|g" $temp_dir/frontend-deployment.yaml
     
     # Update IRSA role ARNs
     log_info "Updating IRSA role ARNs..."
@@ -396,7 +396,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --cluster-name NAME    EKS cluster name (default: employee-directory)"
-            echo "  --region REGION        AWS region (default: us-west-2)"
+            echo "  --region REGION        AWS region (default: us-east-1)"
             echo "  --monitoring           Install monitoring stack"
             echo "  --help                 Show this help message"
             exit 0

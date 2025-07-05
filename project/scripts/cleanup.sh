@@ -7,7 +7,7 @@ set -e
 
 # Configuration
 CLUSTER_NAME="employee-directory"
-AWS_REGION="us-west-2"
+AWS_REGION="us-east-1"
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 
 # Colors for output
@@ -312,7 +312,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --cluster-name NAME    EKS cluster name (default: employee-directory)"
-            echo "  --region REGION        AWS region (default: us-west-2)"
+            echo "  --region REGION        AWS region (default: us-east-1)"
             echo "  --force                Skip confirmation prompts"
             echo "  --help                 Show this help message"
             exit 0
