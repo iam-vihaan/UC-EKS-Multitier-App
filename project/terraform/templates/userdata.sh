@@ -111,5 +111,5 @@ cat > /etc/logrotate.d/docker-containers << 'EOF'
 }
 EOF
 
-# Signal that the instance is ready
-/opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource NodeGroup --region ${AWS::Region}
+# Signal completion (removed the problematic CloudFormation signal)
+echo "Node configuration completed successfully"
